@@ -1,15 +1,24 @@
-import { products } from "@/app/data/products";
+// import { products } from "@/app/data/products";
+async function getProducts() {
+  const res = await fetch("http://localhost:3000/api/products", {
+    cache: "no-store",
+  });
+  return res.json();
+}
 
 // Server Component
-export default function ProductDetailPage({ params }) {
-  console.log("params:", params); // ここで { id: "2" } のはず
-  const id = Number(params.id); // string -> number
+export default async function ProductDetailPage({ params }) {
+  const { id } = params;
 
-  const product = products.find((p) => p.id === id);
+  const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    cache: "no-store",
+  });
 
-  if (!product) {
+  if (!res.ok) {
     return <h1>Product not found</h1>;
   }
+
+  const product = await res.json();
 
   return (
     <div>

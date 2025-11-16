@@ -1,7 +1,17 @@
 import Link from "next/link";
-import { products } from "@/app/data/products";
+// import { products } from "@/app/data/products";
 
-export default function ProductsPage() {
+async function getProducts() {
+  const res = await fetch("http://localhost:3000/api/products", {
+    cache: "no-store",
+  });
+  return res.json();
+}
+
+export default async function ProductsPage() {
+  const products = await getProducts();
+  console.log("console", products);
+
   return (
     <div>
       <h1>商品一覧</h1>
