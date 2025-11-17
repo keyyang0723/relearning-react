@@ -1,12 +1,6 @@
-// import { products } from "@/app/data/products";
-async function getProducts() {
-  const res = await fetch("http://localhost:3000/api/products", {
-    cache: "no-store",
-  });
-  return res.json();
-}
+"use client"; 
+import AddToCartButton from "./AddToCartButton";
 
-// Server Component
 export default async function ProductDetailPage({ params }) {
   const { id } = params;
 
@@ -21,10 +15,12 @@ export default async function ProductDetailPage({ params }) {
   const product = await res.json();
 
   return (
-    <div>
+    <div style={{ padding: 20 }}>
       <h1>{product.name}</h1>
       <p>価格: {product.price}円</p>
-      <p>{product.description}</p>
+
+      {/* クライアントコンポーネントへ商品データを渡す */}
+      <AddToCartButton product={product} />
     </div>
   );
 }
