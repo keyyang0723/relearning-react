@@ -1,6 +1,7 @@
 "use client";
 
 import { useCart } from "../cart/CartContext";
+import Link from "next/link";
 
 export default function CartPage() {
   const { cart, removeFromCart, updateQuantity, getTotalPrice } = useCart();
@@ -59,6 +60,9 @@ export default function CartPage() {
       {cart.length > 0 && (
         <h2>合計: {getTotalPrice()}円</h2>
       )}
+      <Link href="/checkout">
+        <button className="checkout-btn">チェックアウトへ進む</button>
+      </Link>
     </div>
   );
 }
