@@ -1,74 +1,106 @@
 "use client";
 
-import { useCart } from "../cart/CartContext";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCart } from "../cart/CartContext";
 
 export default function CheckoutPage() {
-  const { cart, getTotalPrice, clearCart } = useCart();
   const router = useRouter();
+  const { cart, clearCart } = useCart();
 
-  // フォームのstate
-  const [name, setName] = useState("");
-  const [address, setAddress] = useState("");
-  const [email, setEmail] = useState("");
-  const [tel, setTel] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    address: "",
+  });
 
-  const handleOrder = () => {
-    if (!name || !address || !email) {
-      alert("必要な項目を入力してください");
-      return;
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  // 注文送信
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const orderId = Date.now().toString();
+    const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+    // XML生成
+    const xml = `
+      <order>
+        <id>${orderId}</id>
+        <customer>
+          <name>${form.name}</name>
+          <email>${form.email}</email>
+          <address>${form.address}</address>
+        </customer>
+        <items>
+          ${cart
+            .map(
+              (item) => `
+            <item>
+              <id>${item.id}</id>
+              <name>${item.name}</name>
+              <price>${item.price}</price>
+              <quantity>${item.quantity}</quantity>
+            </item>
+          `
+            )
+            .join("")}
+        </items>
+        <total>${totalAmount}</total>
+      </order>
+    `;
+
+    // XML をサーバーへ保存依頼
+    const res = await fetch("/api/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/xml" },
+      body: xml,
+    });
+
+    if (res.ok) {
+      clearCart();
+      router.push(`/order-complete?id=${orderId}`);
+    } else {
+      alert("注文の送信に失敗しました");
     }
-
-    // 注文完了処理
-    clearCart();
-    router.push("/order-complete");
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>チェックアウト</h1>
+    <div style={{ padding: "20px" }}>
+      <h1>Checkout</h1>
 
-      {/* カート一覧 */}
-      <h2>ご注文内容</h2>
-      {cart.map(item => (
-        <div key={item.id}>
-          {item.name} x {item.quantity} = {item.price * item.quantity}円
-        </div>
-      ))}
+      {cart.length === 0 ? (
+        <p>カートが空です。</p>
+      ) : (
+        <>
+          <h2>注文内容</h2>
+          <ul>
+            {cart.map((item) => (
+              <li key={item.id}>
+                {item.name} × {item.quantity} 個（¥{item.price}）
+              </li>
+            ))}
+          </ul>
 
-      <h3>合計: {getTotalPrice()}円</h3>
+          <h2>お客様情報</h2>
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", maxWidth: "300px" }}>
+            <label>名前：</label>
+            <input name="name" value={form.name} onChange={handleChange} required />
 
-      {/* フォーム */}
-      <h2>お客様情報</h2>
+            <label>Email：</label>
+            <input name="email" value={form.email} onChange={handleChange} required />
 
-      <input
-        placeholder="お名前"
-        value={name}
-        onChange={e => setName(e.target.value)}
-      /><br />
+            <label>住所：</label>
+            <textarea name="address" value={form.address} onChange={handleChange} required />
 
-      <input
-        placeholder="住所"
-        value={address}
-        onChange={e => setAddress(e.target.value)}
-      /><br />
-
-      <input
-        placeholder="メールアドレス"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-      /><br />
-
-      <input
-        placeholder="電話番号"
-        value={tel}
-        onChange={e => setTel(e.target.value)}
-      /><br />
-
-      <button onClick={handleOrder}>
-        注文する
-      </button>
+            <button type="submit" style={{ marginTop: "20px" }}>
+              注文を確定する
+            </button>
+          </form>
+        </>
+      )}
     </div>
   );
 }

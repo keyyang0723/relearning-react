@@ -1,0 +1,28 @@
+
+      <order>
+        <id>1763911808634</id>
+        <customer>
+          <name>hito hito</name>
+          <email>hoge@hoge</email>
+          <address>zyuusho</address>
+        </customer>
+        <items>
+          
+            <item>
+              <id>3</id>
+              <name>Sneakers</name>
+              <price>8000</price>
+              <quantity>2</quantity>
+            </item>
+          
+            <item>
+              <id>2</id>
+              <name>Jeans</name>
+              <price>5000</price>
+              <quantity>1</quantity>
+            </item>
+          
+        </items>
+        <total>21000</total>
+      </order>
+    
