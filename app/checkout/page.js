@@ -56,7 +56,10 @@ export default function CheckoutPage() {
     const res = await fetch("/api/orders", {
       method: "POST",
       headers: { "Content-Type": "application/xml" },
-      body: xml,
+      body: JSON.stringify({
+        orderId,   // ← これを追加
+        xml        // ← XMLは文字列として送る
+      }),
     });
 
     if (res.ok) {

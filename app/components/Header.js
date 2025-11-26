@@ -28,7 +28,8 @@ export default function Header() {
       <nav style={{ display: "flex", gap: "20px", fontSize: 16 }}>
         {/* 商品一覧へのリンク */}
         <Link href="/products">商品一覧</Link>
-
+        {/* 注文一覧へのリンク */}
+        <Link href="/orders">注文一覧</Link>
         {/* カートページへのリンク */}
         <Link href="/cart">
           カート ({cart.length})

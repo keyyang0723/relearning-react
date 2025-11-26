@@ -4,13 +4,30 @@ import path from "path";
 
 export async function POST(req) {
   try {
-    // フロントから送られた XML をテキストで受け取る
-    const xml = await req.text();
+    const { orderId, xml } = await req.json();
+    if (!orderId) {
+      throw new Error("orderId が送られていません");
+    }
+    if (!xml) {
+      throw new Error("XML データが送られていません");
+    }
 
-    // 保存先
-    const filePath = path.join(process.cwd(), "orders.xml");
+    if (!xml) {
+      return new Response("No XML received", { status: 400 });
+    }
 
-    // XMLをファイルとして保存
+    // 保存ディレクトリ（mini-shop/orders）
+    const dirPath = path.join(process.cwd(), "orders");
+
+    // ディレクトリがなければ作成
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath);
+    }
+
+    // 保存ファイルのパス
+    const filePath = path.join(dirPath, `${orderId}.xml`);
+
+    // XMLを書き込む
     fs.writeFileSync(filePath, xml, "utf8");
 
     return NextResponse.json({ success: true });

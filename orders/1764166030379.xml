@@ -1,0 +1,21 @@
+
+      <order>
+        <id>1764166030379</id>
+        <customer>
+          <name>テスト</name>
+          <email>test</email>
+          <address>test</address>
+        </customer>
+        <items>
+          
+            <item>
+              <id>3</id>
+              <name>Sneakers</name>
+              <price>8000</price>
+              <quantity>1</quantity>
+            </item>
+          
+        </items>
+        <total>8000</total>
+      </order>
+    
